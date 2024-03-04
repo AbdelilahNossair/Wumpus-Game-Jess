@@ -262,6 +262,59 @@
 
 ;; THINK rules --------------------------------------------------------------
 
+;;////////////////////////////////////// START CHANGE TASK 1 //////////////////////////////////////
+(defquery find-wumpus  
+  "Query to find the possible locations of the wumpus"
+  (declare (variables ?x ?y)) 
+  (adj ?x ?y ?x2 ?y2) 
+  (and (not (cave (x ?x2) (y ?y2) (has-pit TRUE))) 
+      (not (cave (x ?x2) (y ?y2) (has-gold TRUE))) 
+      (not (cave (x ?x2) (y ?y2) (visited TRUE))))) 
+
+  
+
+(defquery find-pit 
+ "Query to find the possible locations of the pits"
+  (declare (variables ?x ?y)) 
+  (adj ?x ?y ?x2 ?y2) 
+  (and (not (cave (x ?x2) (y ?y2) (has-wumpus TRUE))) 
+       (not (cave (x ?x2) (y ?y2) (has-gold TRUE))) 
+       (not (cave (x ?x2) (y ?y2) (visited TRUE))) 
+))         
+
+  
+
+(defrule wumpus-location 
+  "Find the exact location of the wumpus and print it "
+  (task think) 
+  (cave (x ?x)(y ?y)(stench TRUE)) 
+  (hunter (agent ?a)(x ?x1)(y ?y1)) 
+  (adj ?x ?y ?x2 ?y2) 
+  ?f <- (cave (x ?x2)(y ?y2)(has-wumpus MAYBE)) 
+  (test (= 1 (count-query-results find-wumpus ?x ?y))) 
+  (wumpus (x ?x2) (y ?y2) (alive TRUE)) 
+  => 
+  (printout t "The wumpus is found in (" ?x2 "," ?y2 ")." crlf) 
+  (modify ?f (has-wumpus TRUE) (safe FALSE)) 
+) 
+
+(defrule pit-location 
+  "Find the exact location of the pits and print them"
+  (task think) 
+  (cave (x ?x)(y ?y)(breeze TRUE)) 
+  (hunter (agent ?a)(x ?x1)(y ?y1)) 
+  (adj ?x ?y ?x2 ?y2) 
+  ?f <- (cave (x ?x2)(y ?y2)(has-pit MAYBE)) 
+  (test (= 1 (count-query-results find-pit ?x ?y))) 
+  (pit (x ?x2) (y ?y2)) 
+  => 
+  (printout t "The pit is found in (" ?x2 "," ?y2 ")." crlf) 
+  (modify ?f (has-pit TRUE) (safe FALSE)) 
+) 
+
+;;////////////////////////////////////// END CHANGE TASK 1 //////////////////////////////////////
+
+
 (defrule evaluate-stench-none
   (task think) 
   (cave (x ?x)(y ?y)(stench FALSE))
