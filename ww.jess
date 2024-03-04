@@ -397,6 +397,50 @@
   (printout t "(" ?x "," ?y ") is safe, so there's no pit or wumpus in it." crlf)
   (modify ?f (has-wumpus FALSE)(has-pit FALSE)))
 
+;;//////////////////////////////START CHANGE TASK 4//////////////////////////////
+
+(defrule save-pit-location
+  "Mark the pit's location"
+  (task think)
+  ?f <- (cave (x ?x) (y ?y) (safe UNKNOWN))
+  (pit (x ?x) (y ?y))
+  =>
+  (modify ?f (has-pit TRUE))
+)
+
+(defrule save-Wumpus-location
+  "Mark the Wumpus' location"
+  (task think)
+  ?f <- (cave (x ?x) (y ?y) (safe UNKNOWN))
+  (wumpus (x ?x) (y ?y))
+  =>
+  (modify ?f (has-wumpus TRUE))
+)
+(defrule safe-cave3
+ "safe => ~wumpus ^ ~pit"
+  (task think) 
+  (or ?f <- (cave (x ?x)(y ?y)(safe TRUE)(has-wumpus ~FALSE))
+      ?f <- (cave (x ?x)(y ?y)(safe TRUE)(has-pit ~FALSE)))
+  =>
+  (printout t "(" ?x "," ?y ") is safe, so there's no pit or wumpus in it." crlf)
+  (modify ?f (has-wumpus FALSE)(has-pit FALSE)))
+
+(defrule block-unsafe-cave
+  "Block the agent from entering an unsafe cave"
+  (declare (salience 999))
+  (task move)
+  (hunter (agent ?agent) (x ?x) (y ?y))
+  (or(cave (x ?new-x) (y ?new-y) (safe ~TRUE) (has-pit TRUE))
+    (cave (x ?new-x) (y ?new-y) (safe ~TRUE) (has-pit TRUE)))
+  (test (xy-next ?x ?y ?new-x ?new-y))
+  =>
+  (printout ? "("?new-x","?new-y") is unsafe, therefore, " ?agent " will not move to it." crlf)
+ )
+
+
+
+;;//////////////////////////////END CHANGE TASK 4//////////////////////////////
+
 ;; setting desires ...
 
 (defrule desire-to-leave-caves 
