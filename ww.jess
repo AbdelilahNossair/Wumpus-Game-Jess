@@ -515,6 +515,46 @@
 ;;///////////////////////////END CHANGE TASK 2.2////////////////////////////
 
 
+;;///////////////////////////START CHANGE TASK 3////////////////////////////
+
+(defquery cave-identifier
+  "This query will return the cave with coordinates (x,y)"
+  (declare (variables ?x ?y))
+  (cave (x ?x)(y ?y)(fromx ?fromx)(fromy ?fromy)) 
+)
+
+(deffunction check-way-to-goal (?hunter ?x1 ?y1 ?exit)
+  "This function move the hunter (agent) to the next cave on his way to the goal"
+  (bind ?stop FALSE)
+  (while (not ?stop)
+    (bind ?result (run-query* cave-identifier ?x1 ?y1))
+    (?result next)
+    (bind ?fromx (INTEGER (?result getString fromx)))
+    (bind ?fromy (INTEGER (?result getString fromy)))
+    (if (and (eq ?x1 (fact-slot-value ?exit x))(eq ?y1 (fact-slot-value ?exit y))) then
+      (bind ?result (run-query* cave-identifier (fact-slot-value ?hunter x) (fact-slot-value ?hunter y)))
+      (?result next)
+      (bind ?fromx (INTEGER (?result getString fromx)))
+      (bind ?fromy (INTEGER (?result getString fromy)))
+      (printout t "agent is not going throught the right path, the agent goes to ("?fromx", "?fromy")" crlf)
+      (modify ?hunter (x ?x1)(y ?y1))
+      (bind ?stop TRUE)
+      else 
+        (if (and (eq ?fromx (fact-slot-value ?exit x))(eq ?fromy (fact-slot-value ?exit y)))
+          (printout t "agent is going throught the right path, the agent goes to ("?x1", "?y1")" crlf)
+          (modify ?hunter (x ?x1)(y ?y1))
+          (bind ?stop TRUE)
+        else
+          (bind ?x1 ?fromx)
+          (bind ?y1 ?fromy)
+        )
+
+    )
+  )
+)
+
+;;///////////////////////////END CHANGE TASK 3////////////////////////////
+
 (defrule found-exit
   "If the hunter has gold and finds an exit, she leaves."
   (task act) 
