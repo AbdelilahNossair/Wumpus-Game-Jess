@@ -12,12 +12,18 @@
 
 ;; templates -----------------------------------------------------------------
 
+;;/////////////////////////////// START CHANGE TASK 2.1 /////////////////////////////// 
+
 (deftemplate hunter "A hunter"
   (slot agent (default Xena))
   (slot x (type INTEGER))
   (slot y (type INTEGER))
-  (slot gold (default 0)(type INTEGER))
-  (slot alive (default TRUE)))
+  (slot gold (default 0) (type INTEGER))
+  (slot alive (default TRUE))
+  (slot arrows (default 1) (type INTEGER))
+)
+
+;;/////////////////////////////// END CHANGE TASK 2.1 /////////////////////////////// 
 
 (deftemplate desire "a hunter's desires"
   (slot agent)
@@ -488,6 +494,26 @@
 ;; ACT rules  --------------------------------------------------------------
 
 ;; These rules find a goal and take actions to carry it out.
+
+;;///////////////////////////START CHANGE TASK 2.2////////////////////////////
+(defrule shoot-wumpus
+  ?f <- (cave (has-wumpus TRUE)(safe FALSE))
+  (hunter (arrows ?ar&:(> ?ar 0)))
+  (not (cave (has-wumpus TRUE)(visited TRUE)))
+  (or (and (adj ?x1 ?y1 ?x2 ?y2) (cave (x ?x2)(y ?y2)(has-wumpus TRUE)))
+      (and (adj ?x1 ?y1 ?x2 ?y2) (cave (x ?x2)(y ?y2)(has-wumpus MAYBE)))
+  )
+  ?wumpus <- (wumpus (x ?x2)(y ?y2) (alive TRUE))
+  ?hunter <- (hunter (arrows 1))
+  => 
+  (printout t "The hunter shoots an arrow and hits the wumpus!"crlf)
+  (modify ?f (has-wumpus TRUE) (safe FALSE))
+  (modify ?wumpus (alive FALSE))
+  (modify ?hunter (arrows 0))
+)
+
+;;///////////////////////////END CHANGE TASK 2.2////////////////////////////
+
 
 (defrule found-exit
   "If the hunter has gold and finds an exit, she leaves."
