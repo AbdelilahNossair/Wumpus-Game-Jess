@@ -24,7 +24,6 @@
         (call ?writer write (str-cat " (wumpus (x " (nth$ 1 ?wumpus-position) ") (y " (nth$ 2 ?wumpus-position) "))\n"))
         
         (bind ?randomNumberPits (integer (random 1 (+ ?maxpits 1)))) 
-        (printout t "random pit nbr: " ?randomNumberPits crlf)
         (bind ?i 0)
         (while (<= ?i ?randomNumberPits)
             (bind ?pit-position (random-position ?world_size))

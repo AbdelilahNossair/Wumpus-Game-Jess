@@ -19,7 +19,6 @@ def generate_random_configurations():
             writer.write(f" (wumpus (x {wumpus_position[0]}) (y {wumpus_position[1]}))\n")
             
             random_number_pits = random.randint(1, max_pits + 1)
-            print("random pit nbr:", random_number_pits)
             for i in range(random_number_pits):
                 pit_position = random_position(world_size)
                 if pit_position != wumpus_position:
