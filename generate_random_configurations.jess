@@ -1,0 +1,43 @@
+(deffunction random-position ((?world_size))
+    (bind ?x (integer (random 1 (+ ?world_size))))
+    (bind ?y (integer (random 1 (+ ?world_size))))
+    (list ?x ?y)
+)
+(deffunction generate-random-configurations()
+    (bind ?sample-size 381) ;;381+4(already existing caves cave0.jess ...) = 385
+    (bind ?world_size 4)
+    (bind ?maxpits 13)
+    (bind ?maxGoldAmount 100)
+
+    (for(?n 0 (- ?sample-size 1))
+        (bind ?cave_number (+ ?n 3)) ;;because we already have 4 existing caves
+        (bind ?filename (str-cat "cave" ?cave_number ".jess" ))
+        (bind ?output (new java.io.FileWriter ?filename))
+        (bind ?writer (new java.io.FileWriter ?output))
+
+        (call ?writer write (str-cat "(batch ww.jess)\n"))
+        (call ?writer write (str-cat "(deffacts caves\n (worldsize " ?world_size " " ?world_size ")\n"))
+
+        (bind ?wumpus-position (random-position ?world_size))
+        (call ?writer write (str-cat " (wumpus (x " (nth 1 ?wumpus-position) ") (y " (nth 2 ?wumpus-position) "))\n"))
+        
+        (bind ?randomNumberPits (random (+ ?maxpits 1))) 
+        (for (?i 1 ?randomNumberPits)
+            (bind ?pit-position (random-position ?world_size))
+            (if (or (<> (nth 1 ?pit-position) (nth 1 ?wumpus-position))
+                    (<> (nth 2 ?pit-position) (nth 2 ?wumpus-position)))
+                (call ?writer write (str-cat " (pit (x " (nth 1 ?pit-position) ") (y " (nth 2 ?pit-position) "))\n"))
+            ) 
+        )
+
+        (bind ?gold-position (random-position ?world_size))
+        (bind ?goldAmount (integer (random 1 (+ ?maxGoldAmount 1))))
+        (call ?writer write (str-cat " (gold (x " (nth 1 ?gold-position) ") (y " (nth 2 ?gold-position) ") (amount " ?goldAmount "))\n"))
+
+        (call ?writer write (str-cat " (exit (x 1) (y 1))\n"))
+        (call ?writer write (str-cat " (hunter (agent HAK)))\n")) ;;Agent HAK: Hamza Abdelilah Khalid
+    )
+
+)
+
+(generate-random-configurations)
