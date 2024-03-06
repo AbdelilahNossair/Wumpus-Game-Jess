@@ -21,6 +21,7 @@
   (slot gold (default 0) (type INTEGER))
   (slot alive (default TRUE))
   (slot arrows (default 1) (type INTEGER))
+  (slot wumpus-shot (default FALSE))
 )
 
 ;;/////////////////////////////// END CHANGE TASK 2.1 /////////////////////////////// 
@@ -401,13 +402,25 @@
 
 ;; setting desires ...
 
+
+;;//////////////////////////////START CHANGE TASK 2.3//////////////////////////////
+(defrule desire-to-shoot-Wumpus
+  (task think) 
+  (hunter (agent ?a)(x ?x)(y ?y))
+  (cave (x ?x2)(y ?y2)(has-wumpus TRUE))
+  =>
+  (printout t ?a " wants to shoot the wumpus in (" ?x2 "," ?y2 ")." crlf)
+  (assert (desire (agent ?a)(strength ?*veryhigh*)(action shoot-wumpus))))
+
+
 (defrule desire-to-leave-caves 
   (task think)
-  (hunter (agent ?a)(x ?x)(y ?y)(gold ~0))
+  (hunter (agent ?a)(x ?x)(y ?y)(gold ~0)(wumpus-shot TRUE)) ;; add as a goal to kill the wumpus
   (cave (x ?x)(y ?y)(has-exit TRUE))
   => 
-  (printout t "Having found the gold, " ?a " want to leave the caves." crlf)
+  (printout t "Having found the gold and killed the wumpus, " ?a " want to leave the caves." crlf)
   (assert (desire (agent ?a)(strength ?*veryhigh*)(action leavecaves))))
+;;//////////////////////////////END CHANGE TASK 2.3//////////////////////////////
 
 (defrule add-desire-to-head-for-the-exit
   (task think) 
@@ -509,9 +522,9 @@
   ?hunter <- (hunter (arrows 1))
   => 
   (printout t "The hunter shoots an arrow and hits the wumpus!"crlf)
-  (modify ?f (has-wumpus TRUE) (safe FALSE))
+  (modify ?f (has-wumpus FALSE) (safe TRUE))
   (modify ?wumpus (alive FALSE))
-  (modify ?hunter (arrows 0))
+  (modify ?hunter (arrows 0) (wumpus-shot TRUE))
 )
 
 ;;///////////////////////////END CHANGE TASK 2.2////////////////////////////
