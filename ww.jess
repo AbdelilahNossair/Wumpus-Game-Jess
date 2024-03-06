@@ -424,7 +424,7 @@
 
 (defrule add-desire-to-head-for-the-exit
   (task think) 
-  (hunter (agent ?agent) (x ?x)(y ?y)(gold ~0))
+  (hunter (agent ?agent) (x ?x)(y ?y)(gold ~0)(wumpus-shot TRUE))
   (cave (x ?x)(y ?y)(fromx ?fx)(fromy ?fy))
   (test (> ?fx 0))
   =>  
@@ -570,14 +570,18 @@
 
 ;;///////////////////////////END CHANGE TASK 3////////////////////////////
 
+
+;;///////////////////////////END CHANGE TASK 2.4////////////////////////////
 (defrule found-exit
   "If the hunter has gold and finds an exit, she leaves."
   (task act) 
-  (hunter (agent ?agent) (x ?x)(y ?y)(gold ~0))
+  (hunter (agent ?agent) (x ?x)(y ?y)(gold ~0)(wumpus-shot TRUE))
   (exit (x ?x)(y ?y))
   =>  
  (printout t ?agent " leaves the caves." crlf)
  (halt))
+
+;;///////////////////////////END CHANGE TASK 2.4////////////////////////////
 
 (defrule pickup-gold 
   "If we find the gold, pick it up"
