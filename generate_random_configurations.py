@@ -6,7 +6,7 @@ def random_position(world_size):
     return (x, y)
 
 def generate_random_configurations():
-    sample_size = 385  # 381+4(already existing caves cave0.jess ...) = 385
+    sample_size = 381  # 381+4(already existing caves cave0.jess ...) = 385
     world_size = 4
     max_pits = 13
     max_gold_amount = 100
