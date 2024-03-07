@@ -188,7 +188,6 @@
 
 ;; THINK rules --------------------------------------------------------------
 
-;;////////////////////////////////////// START CHANGE TASK 1 //////////////////////////////////////
 (defquery find-wumpus  
   "Query to find the possible locations of the wumpus"
   (declare (variables ?x ?y)) 
@@ -238,7 +237,6 @@
   (modify ?f (has-pit TRUE) (safe FALSE)) 
 ) 
 
-;;////////////////////////////////////// END CHANGE TASK 1 //////////////////////////////////////
 
 
 (defrule evaluate-stench-none
@@ -322,7 +320,6 @@
 ;; setting desires ...
 
 
-;;//////////////////////////////START CHANGE TASK 2.3//////////////////////////////
 (defrule desire-to-shoot-Wumpus
   (task think) 
   (hunter (agent ?a)(x ?x)(y ?y))
@@ -339,7 +336,6 @@
   => 
   (printout t "Having found the gold and killed the wumpus, " ?a " want to leave the caves." crlf)
   (assert (desire (agent ?a)(strength ?*veryhigh*)(action leavecaves))))
-;;//////////////////////////////END CHANGE TASK 2.3//////////////////////////////
 
 (defrule add-desire-to-head-for-the-exit
   (task think) 
@@ -429,7 +425,6 @@
 
 ;; These rules find a goal and take actions to carry it out.
 
-;;///////////////////////////START CHANGE TASK 2.2////////////////////////////
 (defrule shoot-wumpus
   ?f <- (cave (has-wumpus TRUE)(safe FALSE))
   (hunter (arrows ?ar&:(> ?ar 0)))
@@ -446,10 +441,7 @@
   (modify ?hunter (arrows 0) (wumpus-shot TRUE))
 )
 
-;;///////////////////////////END CHANGE TASK 2.2////////////////////////////
 
-
-;;///////////////////////////START CHANGE TASK 3////////////////////////////
 
 (defquery cave-identifier
   "This query will return the cave with coordinates (x,y)"
@@ -487,10 +479,6 @@
   )
 )
 
-;;///////////////////////////END CHANGE TASK 3////////////////////////////
-
-
-;;///////////////////////////END CHANGE TASK 2.4////////////////////////////
 (defrule found-exit
   "If the hunter has gold and finds an exit, she leaves."
   (task act) 
@@ -500,7 +488,7 @@
  (printout t ?agent " leaves the caves." crlf)
  (halt))
 
-;;///////////////////////////END CHANGE TASK 2.4////////////////////////////
+
 
 (defrule pickup-gold 
   "If we find the gold, pick it up"
@@ -636,5 +624,7 @@
   (retract ?f)
   (printout t "SIMULATING..." crlf)
   (assert (task simulate)))
+
+
 
 

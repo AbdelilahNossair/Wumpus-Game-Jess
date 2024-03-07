@@ -1,6 +1,5 @@
 
 ;; global variables -----------------------------------------------------------
-
 (defglobal ; these global variables encode the strength of desires
   ?*veryhigh* = 5
   ?*high* = 4
@@ -8,12 +7,7 @@
   ?*low* = 2 
   ?*verylow* = 1 )
 
-
-
 ;; templates -----------------------------------------------------------------
-
-;;/////////////////////////////// START CHANGE TASK 2.1 /////////////////////////////// 
-
 (deftemplate hunter "A hunter"
   (slot agent (default Xena))
   (slot x (type INTEGER))
@@ -23,8 +17,6 @@
   (slot arrows (default 1) (type INTEGER))
   (slot wumpus-shot (default FALSE))
 )
-
-;;/////////////////////////////// END CHANGE TASK 2.1 /////////////////////////////// 
 
 (deftemplate desire "a hunter's desires"
   (slot agent)

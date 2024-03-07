@@ -553,7 +553,7 @@
 ;; and asserting an appropriate goal.
 
 
-;;//////////////////////////////START TASK 4//////////////////////////////
+;;//////////////////////////////START TASK 4.1//////////////////////////////
 (defrule choose-desire
   "pick the best desire available for a given action. note that we
     will only promote one desire to be a goal at a time."
@@ -568,7 +568,7 @@
   (retract ?f1)
   (assert (goal (action ?act1) (x ?x1)(y ?y1))))
  
-;;//////////////////////////////END TASK 4//////////////////////////////
+;;//////////////////////////////END TASK 4.1//////////////////////////////
 
 
 ;; ACT rules  --------------------------------------------------------------
@@ -782,5 +782,3 @@
   (retract ?f)
   (printout t "SIMULATING..." crlf)
   (assert (task simulate)))
-
-
