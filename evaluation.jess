@@ -1,0 +1,33 @@
+(deffunction run-script-for-evaluation ()
+  (bind ?n 2) ;; Adjust based on your actual number of caves.
+  (bind ?i 0)
+  (printout t "Loading setup.jess")
+  (batch "setup.jess")
+  (while (< ?i ?n)
+    (printout t "Resetting environment for cave" ?i)
+    (reset)
+    (printout t "Loading cave configuration from cave" ?i ".jess")
+    (batch (str-cat "cave" ?i ".jess"))
+    (printout t "Loading simulation logic from logic.jess")
+    (batch "logic.jess")
+    (printout t "Running simulation...")
+    (run)
+    (printout t "Simulation run completed. Extracting hunter's state...")
+
+    ;; Initialize variables to hold the state of the hunter.
+    (bind ?alive "unknown")
+    (bind ?arrows "unknown")
+    (bind ?wumpus-shot "unknown")
+
+    (do-for-all-facts ((?h hunter)) TRUE
+      (bind ?alive (if (?h getSlotValue alive) then "yes" else "no"))
+      (bind ?arrows (?h getSlotValue arrows))
+      (bind ?wumpus-shot (if (?h getSlotValue wumpus-shot) then "yes" else "no"))
+    )
+
+    (printout t "Evaluation for cave " ?i " completed. Alive: " ?alive ", Arrows: " ?arrows ", Wumpus Killed: " ?wumpus-shot)
+    (bind ?i (+ ?i 1))
+  )
+)
+
+(run-script-for-evaluation)

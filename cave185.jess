@@ -1,0 +1,7 @@
+(deffacts caves
+ (worldsize 4 4)
+ (wumpus (x 1) (y 2))
+ (pit (x 3) (y 1))
+ (gold (x 4) (y 4) (amount 54))
+ (exit (x 1) (y 1))
+ (hunter (agent HAK)))

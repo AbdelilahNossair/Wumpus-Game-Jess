@@ -1,0 +1,80 @@
+
+;; global variables -----------------------------------------------------------
+
+(defglobal ; these global variables encode the strength of desires
+  ?*veryhigh* = 5
+  ?*high* = 4
+  ?*medium* =  3
+  ?*low* = 2 
+  ?*verylow* = 1 )
+
+
+
+;; templates -----------------------------------------------------------------
+
+;;/////////////////////////////// START CHANGE TASK 2.1 /////////////////////////////// 
+
+(deftemplate hunter "A hunter"
+  (slot agent (default Xena))
+  (slot x (type INTEGER))
+  (slot y (type INTEGER))
+  (slot gold (default 0) (type INTEGER))
+  (slot alive (default TRUE))
+  (slot arrows (default 1) (type INTEGER))
+  (slot wumpus-shot (default FALSE))
+)
+
+;;/////////////////////////////// END CHANGE TASK 2.1 /////////////////////////////// 
+
+(deftemplate desire "a hunter's desires"
+  (slot agent)
+  (slot strength (type INTEGER))
+  (slot action)
+  (slot x)
+  (slot y))
+
+(deftemplate goal "a hunter's goals"
+  (slot agent)
+  (slot action)
+  (slot x)
+  (slot y))
+
+(deftemplate cave
+  "Cave objects sore the hunter's model of the world"
+  (slot x (type INTEGER))		; (x,y) coordinates of cave
+  (slot y (type INTEGER))		; 
+  (slot fromx (default -1))		; coordinates of the cave from which we 
+  (slot fromy (default -1))		;   first entered the cave.
+  (slot visited (default FALSE))	; Has the hunter been in it?
+  (slot stench (default UNKNOWN))	; Does the cave smell?
+  (slot breeze (default UNKNOWN))	; Is it breezy?
+  (slot glitter (default UNKNOWN))	; Is there a glitter in it?
+  (slot has-wumpus (default UNKNOWN))	; Is there a wumpus here?
+  (slot has-pit (default UNKNOWN))	; Is there a pit here?
+  (slot has-gold (default UNKNOWN))	; Is their gold here?
+  (slot has-exit (default UNKNOWN))
+  (slot safe (default UNKNOWN)))	; Is the cave safe -- no wumpus, no pit?
+
+(deftemplate nocave
+  "a nocave assertion is used to indicate a cell in the world that is
+  not a cave.  (nocave (x 3)(y 3)) means that (3,3) is not a cave."
+  (slot x (type INTEGER))
+  (slot y (type INTEGER)))
+
+(deftemplate wumpus "a wumpus"
+  (slot x (type INTEGER))
+  (slot y (type INTEGER))
+  (slot alive (default TRUE)))
+
+(deftemplate pit "A pit"
+  (slot x (type INTEGER))
+  (slot y (type INTEGER)))
+
+(deftemplate gold "Gold has a location and amount."
+  (slot x (type INTEGER))
+  (slot y (type INTEGER))
+  (slot amount (type INTEGER)(default 10)))
+
+(deftemplate exit "coordinates of the entrance/exit to the caves."
+  (slot x)
+  (slot y))
