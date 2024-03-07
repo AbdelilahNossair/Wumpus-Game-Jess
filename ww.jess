@@ -1,12 +1,17 @@
 
 ;; global variables -----------------------------------------------------------
 
+
+
+;;///////////////////////////////START TASK 3.1///////////////////////////////
 (defglobal ; these global variables encode the strength of desires
   ?*veryhigh* = 5
   ?*high* = 4
   ?*medium* =  3
   ?*low* = 2 
-  ?*verylow* = 1 )
+  ?*verylow* = 1 
+  ?*extremelylow* = 0)
+;;///////////////////////////////END TASK 3.1///////////////////////////////
 
 
 
@@ -389,6 +394,23 @@
   (printout t "Since " ?agent " is in ("?x "," ?y ") and not dead, it must be safe." crlf)
   (modify ?f (safe TRUE)))
 
+;;//////////////////////////////START CHANGE TASK 4.2//////////////////////////////
+
+(defrule block-unsafe-move
+  (declare (salience 100))
+  (task move)
+  (hunter (agent ?agent)(x ?x)(y ?y)(alive TRUE))
+  (cave (x ?new-x)(y ?new-y)(safe ~TRUE)(has-pit TRUE))
+  (test (xy-next ?x ?y ?new-x ?new-y))
+  =>
+  (printout t ?agent " will not move to ("?new-x","?new-y") because it is unsafe" crlf)
+  (assert (task think))
+)
+
+;;//////////////////////////////END CHANGE TASK 4.2//////////////////////////////
+
+
+
 (defrule safe-cave3
  "safe => ~wumpus ^ ~pit"
   (task think) 
@@ -489,21 +511,64 @@
  (assert (desire (agent ?agent) (strength ?*verylow*) (action go)(x ?x2)(y  ?y2))))
 
 
+;;////////////////////////////START TASK 3.2//////////////////////////////////////
+(defrule add-desire-to-go-to-visited-safe-distant-cave
+"go to a non-adjacent, safe, visited cave"
+(task think)
+(hunter (agent ?agent)(x ?x)(y ?y))
+(cave (x ?x2)(y ?y2)(visited TRUE)(safe TRUE))
+(not (adj ?x ?y ?x2 ?y2))
+=>
+(printout t ?agent " slightly wants to go to (" ?x2 "," ?y2 ")." crlf)
+(assert (desire (agent ?agent) (strength ?*verylow*) (action go)(x ?x2)(y ?y2))))
+ 
+ 
+ 
+(defrule add-desire-to-go-to-visited-risky-adjacent-cave
+"go to an adjacent, risky, visited cave"
+(task think)
+(hunter (agent ?agent)(x ?x)(y ?y))
+(cave (x ?x2)(y ?y2)(visited TRUE)(safe UNKNOWN))
+(adj ?x ?y ?x2 ?y2)
+=>
+(printout t ?agent " barely wants to go to (" ?x2 "," ?y2 ")." crlf)
+(assert (desire (agent ?agent) (strength ?*extremelylow*) (action go)(x ?x2)(y  ?y2))))
+ 
+(defrule add-desire-to-go-to-visited-risky-distant-cave
+ 
+"go to a distant, risky, visited cave"
+(task think)
+(hunter (agent ?agent)(x ?x)(y ?y))
+(cave (x ?x2)(y ?y2)(visited TRUE)(safe UNKNOWN))
+(not (adj ?x ?y ?x2 ?y2))
+=>
+(printout t ?agent " barely wants to go to (" ?x2 "," ?y2 ")." crlf)
+(assert (desire (agent ?agent) (strength ?*extremelylow*) (action go)(x ?x2)(y  ?y2))))
+;;////////////////////////////START TASK 3.2//////////////////////////////////////
+
+
 ;; PLAN rules  --------------------------------------------------------------
 
 ;; Planning our action is just simply picking the desire to realize
 ;; and asserting an appropriate goal.
 
-(defrule choose-desire 
+
+;;//////////////////////////////START TASK 4//////////////////////////////
+(defrule choose-desire
   "pick the best desire available for a given action. note that we
     will only promote one desire to be a goal at a time."
   (task plan)
-  ?f <- (desire (strength ?s)(action ?act)(x ?x)(y ?y))
-  (not (desire (strength ?s2&:(> ?s2 ?s))))
+  (hunter (agent ?agent)(x ?x)(y ?y))
+  ?f1 <- (desire (strength ?s1)(action ?act1)(x ?x1)(y ?y1))
+  (not (desire (strength ?s2&:(> ?s2 ?s1))))
+  ?f2 <- (desire (strength ?s3&:(< ?s3 ?s1))(action ?act2)(x ?x2)(y ?y2))
   (not (goal))
-  => 
- (retract ?f)
- (assert (goal (action ?act) (x ?x)(y ?y))))
+  =>
+  (printout t ?agent " chooses to "?act1" in (" ?x1 "," ?y1 ")  with priority " ?s1 " rather than "?act2" in (" ?x2 "," ?y2 ") with priority " ?s3  "." crlf)
+  (retract ?f1)
+  (assert (goal (action ?act1) (x ?x1)(y ?y1))))
+ 
+;;//////////////////////////////END TASK 4//////////////////////////////
 
 
 ;; ACT rules  --------------------------------------------------------------
@@ -530,7 +595,7 @@
 ;;///////////////////////////END CHANGE TASK 2.2////////////////////////////
 
 
-;;///////////////////////////START CHANGE TASK 3////////////////////////////
+;;///////////////////////////START CHANGE TASK 3.3////////////////////////////
 
 (defquery cave-identifier
   "This query will return the cave with coordinates (x,y)"
@@ -568,7 +633,7 @@
   )
 )
 
-;;///////////////////////////END CHANGE TASK 3////////////////////////////
+;;///////////////////////////END CHANGE TASK 3.3////////////////////////////
 
 
 ;;///////////////////////////END CHANGE TASK 2.4////////////////////////////
@@ -717,7 +782,3 @@
   (retract ?f)
   (printout t "SIMULATING..." crlf)
   (assert (task simulate)))
-
-
-
-  
